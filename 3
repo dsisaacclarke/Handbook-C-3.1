@@ -1,0 +1,55 @@
+#include <iostream>
+#include <deque>
+#include <string>
+#include <limits>
+
+void MakeTrain() {
+    std::deque<int> train;
+    std::string command;
+
+    while (std::cin >> command) {
+        if (command == "+left") {
+            int carriage;
+            std::cin >> carriage;
+            train.push_front(carriage);
+        } else if (command == "+right") {
+            int carriage;
+            std::cin >> carriage;
+            train.push_back(carriage);
+        } else if (command == "-left") {
+            int num_carriages;
+            std::cin >> num_carriages;
+           if (num_carriages < 0){
+                continue;
+           }
+           
+            size_t num_carriages_size_t = static_cast<size_t>(num_carriages);
+            
+            if (num_carriages_size_t >= train.size()) {
+                train.clear();
+            } else {
+                 for (int i = 0; i < num_carriages; ++i){
+                     train.pop_front();
+                }
+            }
+        } else if (command == "-right") {
+            int num_carriages;
+            std::cin >> num_carriages;
+             if (num_carriages < 0){
+                continue;
+             }
+            size_t num_carriages_size_t = static_cast<size_t>(num_carriages);
+              if (num_carriages_size_t >= train.size()) {
+                train.clear();
+            } else {
+                 for (int i = 0; i < num_carriages; ++i){
+                     train.pop_back();
+                }
+            }
+        }
+    }
+    for (const auto& carriage : train) {
+        std::cout << carriage << " ";
+    }
+}
+
