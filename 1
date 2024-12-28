@@ -1,0 +1,16 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+
+template <typename Container>
+
+void Print(const Container& container, const std::string& separator) {
+    auto iterator = container.begin();
+    for (; iterator != container.end(); ++iterator) {
+        std::cout << *iterator;
+        if (std::next(iterator) != container.end()) {
+            std::cout << separator;
+        }
+    }
+}
