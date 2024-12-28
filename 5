@@ -1,0 +1,97 @@
+#include <iostream>
+#include <string>
+#include <list>
+
+int main() {
+    std::list<std::string> my_file;
+
+    while (true) {
+        std::string line;
+        std::getline(std::cin, line);
+
+        if (line.empty()) {
+            break;
+        }
+
+        my_file.push_back(line);
+    }
+
+    auto my_cursor = my_file.begin();
+
+    std::list<std::string> my_buffer;
+
+    bool shift_is_pressed = false;
+    int shift_dist = 0;
+    auto my_shift_mark = my_file.begin();
+
+    std::string command;
+    while (std::cin >> command) {
+        if (command == "Up") {
+            if (my_cursor == my_file.begin()) {
+                continue;
+            }
+
+            --my_cursor;
+            if (!shift_is_pressed) {
+                my_shift_mark = my_cursor;
+            } else {
+                --shift_dist;
+            }
+        } else if (command == "Down") {
+            if (my_cursor == my_file.end()) {
+                continue;
+            }
+
+            ++my_cursor;
+             if (!shift_is_pressed) {
+                my_shift_mark = my_cursor;
+            } else {
+                ++shift_dist;
+            }
+        } else if (command == "Ctrl+X") {
+            if (my_shift_mark == my_cursor && my_cursor == my_file.end()) {
+                continue;
+            }
+
+            my_buffer.clear();
+
+            if (my_shift_mark == my_cursor) {
+                auto to_cut = my_cursor;
+                my_cursor = std::next(my_cursor);
+                my_buffer.splice(my_buffer.begin(), my_file, to_cut);
+            } else if (shift_dist < 0) {
+                my_buffer.splice(my_buffer.begin(), my_file, my_cursor, my_shift_mark);
+                my_cursor = my_shift_mark;
+            } else {
+                my_buffer.splice(my_buffer.begin(), my_file, my_shift_mark, my_cursor);
+            }
+
+            shift_is_pressed = false;
+            my_shift_mark = my_cursor;
+            shift_dist = 0;
+        } else if (command == "Ctrl+V") {
+            if (my_buffer.empty()) {
+                continue;
+            }
+
+           if (shift_dist < 0) {
+                my_cursor = my_file.erase(my_cursor, my_shift_mark);
+            } else if (shift_dist > 0) {
+                my_cursor = my_file.erase(my_shift_mark, my_cursor);
+            }
+
+
+            my_file.insert(my_cursor, my_buffer.begin(), my_buffer.end());
+
+            shift_is_pressed = false;
+            my_shift_mark = my_cursor;
+            shift_dist = 0;
+        } else if (command == "Shift") {
+            shift_is_pressed = true;
+        }
+    }
+
+    for (const auto &x: my_file) {
+        std::cout << x << "\n";
+    }
+}
